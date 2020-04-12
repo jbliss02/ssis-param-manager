@@ -40,17 +40,32 @@ def CreateSummary(file, xml):
 
     summary = DTSXFile()
     summary.fileInfo = file
+    AddConnectionInfo(summary, xml)
 
     dtsx.append(summary)
-    con = GetConnectionInfo(xml)
     x = 11
 
-def GetConnectionInfo(xml):
+def AddConnectionInfo(file, xml):
     
     result = []
 
+    if not 'DTS:ConnectionManagers' in xml['DTS:Executable']:
+        return
+
     for conInfo in xml['DTS:Executable']['DTS:ConnectionManagers']['DTS:ConnectionManager']:
-        result.append(conInfo)
+
+        if not 'DTS:ObjectData' in conInfo or not isinstance(conInfo, dict):
+            continue
+
+        if 'DTS:ConnectionManager' in conInfo['DTS:ObjectData'] and '@DTS:ConnectionString' in conInfo['DTS:ObjectData']['DTS:ConnectionManager']:
+
+            if not conInfo['DTS:ObjectData']['DTS:ConnectionManager']['@DTS:ConnectionString'] in file.connnectionInfo:
+                file.connnectionInfo.append(conInfo['DTS:ObjectData']['DTS:ConnectionManager']['@DTS:ConnectionString'])
+
+        elif 'SmtpConnectionManager' in conInfo['DTS:ObjectData']:
+
+            if not conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'] in file.connnectionInfo:
+                file.connnectionInfo.append(conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'])
 
     return result
 
