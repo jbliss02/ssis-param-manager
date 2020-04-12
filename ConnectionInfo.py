@@ -1,0 +1,3 @@
+class ConnectionInfo:
+    connectionName = ''
+    connectionString = ''
