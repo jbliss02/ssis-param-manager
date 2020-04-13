@@ -2,7 +2,7 @@ from ConnectionInfo import ConnectionInfo
 
 class DTSXFile:
     fileInfo = ''
-    connnectionInfo = []
+    connectionInfo = []
     parameters = []
 
 class DTSXParameter:

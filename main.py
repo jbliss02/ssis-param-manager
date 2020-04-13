@@ -1,3 +1,4 @@
+import csv
 import os
 import configparser
 import xmltodict
@@ -44,6 +45,8 @@ def ExtractParamsFromFiles():
 def CreateSummary(file, xml):
 
     summary = DTSXFile()
+    summary.connectionInfo = []
+    summary.parameters = []
     summary.fileInfo = file
     AddConnectionInfo(summary, xml)
     AddParameters(summary, xml)
@@ -61,20 +64,18 @@ def AddConnectionInfo(file, xml):
 
         if 'DTS:ConnectionManager' in conInfo['DTS:ObjectData'] and '@DTS:ConnectionString' in conInfo['DTS:ObjectData']['DTS:ConnectionManager']:
 
-            if not conInfo['DTS:ObjectData']['DTS:ConnectionManager']['@DTS:ConnectionString'] in file.connnectionInfo:
-                file.connnectionInfo.append(conInfo['DTS:ObjectData']['DTS:ConnectionManager']['@DTS:ConnectionString'])
+            if not conInfo['DTS:ObjectData']['DTS:ConnectionManager']['@DTS:ConnectionString'] in file.connectionInfo:
+                file.connectionInfo.append(conInfo['DTS:ObjectData']['DTS:ConnectionManager']['@DTS:ConnectionString'])
 
         elif 'SmtpConnectionManager' in conInfo['DTS:ObjectData']:
 
-            if not conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'] in file.connnectionInfo:
-                file.connnectionInfo.append(conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'])
+            if not conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'] in file.connectionInfo:
+                file.connectionInfo.append(conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'])
 
 def AddParameters(file, xml):
 
     if not 'DTS:PackageParameters' in xml['DTS:Executable']:
         return
-
-    params = []
 
     for item in xml['DTS:Executable']['DTS:PackageParameters']['DTS:PackageParameter']:
 
@@ -83,14 +84,24 @@ def AddParameters(file, xml):
 
         param = DTSXParameter()
         param.name = item['@DTS:ObjectName']
-        param.value = item['DTS:Property']['#text']
+        param.value = item['DTS:Property']['#text'].replace('\u200b', '')
 
-        params.append(param)
+        file.parameters.append(param)
 
-    if (len(params) > 0):
-        file.parameters.append(params)
+def WriteToCSV():
+
+    f = open(config.get('IO', 'outputFile'), 'w', newline='')
+
+    with f:
+
+        writer = csv.writer(f)
+        
+        for file in dtsx:
+            for connection in file.connectionInfo:
+                writer.writerow([file.fileInfo.name, 'ConnectionString', connection])
+            for param in file.parameters:
+                writer.writerow([file.fileInfo.name, param.name, param.value])
 
 GetFiles()
 ExtractParamsFromFiles()
-
-t = 1
+WriteToCSV()
