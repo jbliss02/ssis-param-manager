@@ -1,10 +1,14 @@
 import os
 import configparser
 import xmltodict
+import configparser
 from dtsx import DTSXFile
 from dtsx import DTSXParameter
 
-seed = 'C:/Users/james/source/repos/ssis_digitex'
+config = configparser.ConfigParser()
+config.read("config.ini")
+seed = config.get('IO', 'seedDirectory')
+
 dirs = []
 files = []
 dtsx = []
