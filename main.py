@@ -2,6 +2,7 @@ import os
 import configparser
 import xmltodict
 from dtsx import DTSXFile
+from dtsx import DTSXParameter
 
 seed = 'C:/Users/james/source/repos/ssis_digitex'
 dirs = []
@@ -41,14 +42,11 @@ def CreateSummary(file, xml):
     summary = DTSXFile()
     summary.fileInfo = file
     AddConnectionInfo(summary, xml)
-
+    AddParameters(summary, xml)
     dtsx.append(summary)
-    x = 11
 
 def AddConnectionInfo(file, xml):
     
-    result = []
-
     if not 'DTS:ConnectionManagers' in xml['DTS:Executable']:
         return
 
@@ -67,7 +65,26 @@ def AddConnectionInfo(file, xml):
             if not conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'] in file.connnectionInfo:
                 file.connnectionInfo.append(conInfo['DTS:ObjectData']['SmtpConnectionManager']['@ConnectionString'])
 
-    return result
+def AddParameters(file, xml):
+
+    if not 'DTS:PackageParameters' in xml['DTS:Executable']:
+        return
+
+    params = []
+
+    for item in xml['DTS:Executable']['DTS:PackageParameters']['DTS:PackageParameter']:
+
+        if not isinstance(item, dict) or not '#text' in item['DTS:Property']:
+            continue
+
+        param = DTSXParameter()
+        param.name = item['@DTS:ObjectName']
+        param.value = item['DTS:Property']['#text']
+
+        params.append(param)
+
+    if (len(params) > 0):
+        file.parameters.append(params)
 
 GetFiles()
 ExtractParamsFromFiles()

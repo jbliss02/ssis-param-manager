@@ -3,4 +3,8 @@ from ConnectionInfo import ConnectionInfo
 class DTSXFile:
     fileInfo = ''
     connnectionInfo = []
-    params = []
+    parameters = []
+
+class DTSXParameter:
+    name = ''
+    value = ''
