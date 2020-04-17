@@ -5,10 +5,10 @@ import xmltodict
 import configparser
 from dtsx import DTSXFile
 from dtsx import DTSXParameter
+import extract
 
 config = configparser.ConfigParser()
 config.read("config.ini")
-seed = config.get('IO', 'seedDirectory')
 
 dirs = []
 files = []
@@ -16,8 +16,11 @@ dtsx = []
 
 def GetFiles():
 
-    dirs.append(seed)
-    
+    seeds = config.items('SeedDirectories')
+
+    for key, seed in seeds:
+        dirs.append(seed)
+
     while len(dirs) > 0:
         ScanDir(dirs[0])
 
@@ -104,4 +107,5 @@ def WriteToCSV():
 
 GetFiles()
 ExtractParamsFromFiles()
-WriteToCSV()
+ExtractServerPaths(dtsx)
+#WriteToCSV()
