@@ -96,7 +96,6 @@ def WriteToCSV():
     f = open(config.get('IO', 'outputFile'), 'w', newline='')
 
     with f:
-
         writer = csv.writer(f)
         
         for file in dtsx:
@@ -107,5 +106,5 @@ def WriteToCSV():
 
 GetFiles()
 ExtractParamsFromFiles()
-extraction.ExtractPaths(dtsx, True)
+extraction.WriteServerLocationsToFile(dtsx, True, True, config.get('IO', 'serverMappingResultsFile'))
 #WriteToCSV()

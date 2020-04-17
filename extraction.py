@@ -1,55 +1,68 @@
-filePaths = []
-serverLocations = []
+from locationMapping import LocationMapping 
 
-def ExtractPaths(dtsx, removeServerName):
+filePaths = []
+serverLocationMapping = []
+
+def WriteServerLocationsToFile(dtsx, removeServerName, removeDrives, resultsFilePath):
+
+    ExtractPaths()
+
+    f = open(resultsFilePath, 'w', newline='')
+
+    with f:
+        writer = csv.writer(f)
+
+        for mapping in serverLocationMapping:
+            write.writerow([mapping.original, mapping.fileName, mapping.new])
+        
+
+def ExtractPaths(dtsx, removeServerName, removeDrives):
 
     for file in dtsx:
         for connection in file.connectionInfo:
             if IsPath(connection):
-                Add(connection, removeServerName)
+                Add(connection, removeServerName, removeDrives)
         for param in file.parameters:
             if IsPath(param.value):
-                Add(param.value, removeServerName)
+                Add(param.value, removeServerName, removeDrives)
 
-    serverLocations.sort()
-    filePaths.sort()
 
-    return 1
+def Add(value, removeServerName, removeDrives):
 
-def Add(value, removeServerName):
+    serverLocationMapping.append(AddFile(value, removeServerName, removeDrives))
 
-    value = AddFile(value, removeServerName)
-
-    if not value in serverLocations:
-        serverLocations.append(value)
-
-def AddFile(value, removeServerName):
+def AddFile(value, removeServerName, removeDrives):
     
+    result = LocationMapping()
+    result.original = value
+
     split = value.split('\\')
 
+    #remove the blanks
     while ('' in split):
         split.remove('')
 
-    if len(split) < 2:
-        return value
-
+    #add to the list of files if it is a file
     if '.' in split[len(split) - 1] and not value in filePaths:
         filePaths.append(value)
-
-    split.remove(split[len(split) - 1])
+        result.fileName = split[len(split) - 1]
+        split.remove(result.fileName)
 
     if removeServerName:
         split.remove(split[0])
 
-    result = ''
+    if removeDrives:
+        for item in split:
+            if '$' in item:
+                split.remove(item)
+                continue
 
     for item in split:
 
         if len(item) > 0:
-            result += '\\\\' + item
+            result.new += '\\\\' + item
 
     return result
-
 
 def IsPath(value):
     return value.startswith('\\\\')
