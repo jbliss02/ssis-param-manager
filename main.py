@@ -3,9 +3,9 @@ import os
 import configparser
 import xmltodict
 import configparser
+import extraction
 from dtsx import DTSXFile
 from dtsx import DTSXParameter
-import extract
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -107,5 +107,5 @@ def WriteToCSV():
 
 GetFiles()
 ExtractParamsFromFiles()
-ExtractServerPaths(dtsx)
+extraction.ExtractServerPaths(dtsx)
 #WriteToCSV()
