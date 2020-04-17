@@ -107,5 +107,5 @@ def WriteToCSV():
 
 GetFiles()
 ExtractParamsFromFiles()
-extraction.ExtractServerPaths(dtsx)
+extraction.ExtractPaths(dtsx, true)
 #WriteToCSV()
