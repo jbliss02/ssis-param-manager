@@ -1,3 +1,4 @@
+import csv
 from locationMapping import LocationMapping 
 
 filePaths = []
@@ -12,8 +13,10 @@ def WriteServerLocationsToFile(dtsx, removeServerName, removeDrives, resultsFile
     with f:
         writer = csv.writer(f)
 
+        writer.writerow(['Original', 'FileName', 'New'])
+
         for mapping in serverLocationMapping:
-            write.writerow([mapping.original, mapping.fileName, mapping.new])
+            writer.writerow([mapping.original, mapping.fileName, mapping.new])
         
 
 def ExtractPaths(dtsx, removeServerName, removeDrives):
@@ -42,8 +45,13 @@ def AddFile(value, removeServerName, removeDrives):
     while ('' in split):
         split.remove('')
 
+    #are there any files
+    for item in split:
+        if '.' in item:
+            x = 2
+
     #add to the list of files if it is a file
-    if '.' in split[len(split) - 1] and not value in filePaths:
+    if '.' in split[len(split) - 1]:
         filePaths.append(value)
         result.fileName = split[len(split) - 1]
         split.remove(result.fileName)

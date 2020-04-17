@@ -4,6 +4,7 @@ import configparser
 import xmltodict
 import configparser
 import extraction
+import datetime
 from dtsx import DTSXFile
 from dtsx import DTSXParameter
 
@@ -104,7 +105,12 @@ def WriteToCSV():
             for param in file.parameters:
                 writer.writerow([file.fileInfo.name, param.name, param.value])
 
+def Write(message):
+    print(str(datetime.datetime.now().time()) + " " + message)
+
+Write('Started')
 GetFiles()
 ExtractParamsFromFiles()
 extraction.WriteServerLocationsToFile(dtsx, True, True, config.get('IO', 'serverMappingResultsFile'))
 #WriteToCSV()
+Write('Finished')
