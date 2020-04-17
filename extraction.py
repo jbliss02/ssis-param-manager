@@ -5,7 +5,7 @@ serverLocationMapping = []
 
 def WriteServerLocationsToFile(dtsx, removeServerName, removeDrives, resultsFilePath):
 
-    ExtractPaths()
+    ExtractPaths(dtsx, removeServerName, removeDrives)
 
     f = open(resultsFilePath, 'w', newline='')
 
