@@ -111,6 +111,6 @@ def Write(message):
 Write('Started')
 GetFiles()
 ExtractParamsFromFiles()
-extraction.WriteServerLocationsToFile(dtsx, True, True, config.get('IO', 'serverMappingResultsFile'))
+extraction.WriteServerLocationsToFile(dtsx, True, True, config.get('IO', 'serverMappingResultsFile'), config.get('IO', 'newSeverLocationsFilePath'))
 #WriteToCSV()
 Write('Finished')
