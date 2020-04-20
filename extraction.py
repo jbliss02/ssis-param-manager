@@ -4,7 +4,7 @@ from locationMapping import LocationMapping
 filePaths = []
 serverLocationMapping = []
 
-def WriteServerLocationsToFile(dtsx, removeServerName, removeDrives, resultsFilePath, newSeverLocationsFilePath):
+def WriteServerLocationsToFile(dtsx, removeServerName, removeDrives, resultsFilePath):
 
     ExtractPaths(dtsx, removeServerName, removeDrives)
 
@@ -17,18 +17,7 @@ def WriteServerLocationsToFile(dtsx, removeServerName, removeDrives, resultsFile
 
         for mapping in serverLocationMapping:
             writer.writerow([mapping.original, mapping.fileName, mapping.new])
-
-    f = open(newSeverLocationsFilePath, 'w', newline='')
-
-    with f:
-        writer = csv.writer(f)
-
-        writer.writerow(['New'])
-
-        for mapping in serverLocationMapping:
-            writer.writerow([mapping.new])
-        
-
+            
 def ExtractPaths(dtsx, removeServerName, removeDrives):
 
     for file in dtsx:
